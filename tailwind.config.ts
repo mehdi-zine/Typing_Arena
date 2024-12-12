@@ -8,9 +8,14 @@ export default {
   ],
   theme: {
     extend: {
+      screens: {
+        'xs': '350px',
+      },
       colors: {
-        background: "var(--background)",
-        foreground: "var(--foreground)",
+        primary: "#3DB6A9", // Teal
+        secondary: "#FF6F61",
+        neutralLight: "#FFFFFF", // White
+        neutralDark: "#2C3E50", // Dark Gray
       },
     },
   },
