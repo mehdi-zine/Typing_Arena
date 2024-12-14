@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useGame } from "../context/GameContext";
 
 interface TypingTextProps {
@@ -11,6 +11,7 @@ const TypingText: React.FC<TypingTextProps> = ({ text }) => {
   const [inputValue, setInputValue] = useState("");
   const { triggerAction } = useGame();
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
+  const [isCompleted, setIsCompleted] = useState(false);
   const words = text.split(" ");
   const totalWords = words.length;
   const damagePerWord = 100 / totalWords;
@@ -31,6 +32,12 @@ const TypingText: React.FC<TypingTextProps> = ({ text }) => {
       triggerAction(1, damagePerWord);
     }
   };
+
+  useEffect(() => {
+    if (currentWordIndex === totalWords) {
+      setIsCompleted(true); // Mark the text as completed when all words are typed
+    }
+  }, [currentWordIndex, totalWords]);
 
   return (
     <div className="max-w-full">
@@ -97,8 +104,15 @@ const TypingText: React.FC<TypingTextProps> = ({ text }) => {
         type="text"
         value={inputValue}
         onChange={handleInputChange}
-        placeholder="Type here..."
-        className="w-full p-4 rounded-lg text-gray-800 text-lg border-2 border-teal-400 focus:outline-none focus:border-teal-600 shadow-lg mt-4"
+        placeholder={isCompleted ? "Finished!" : "Type here..."}
+        className={`w-full p-4 rounded-lg text-gray-800 text-lg border-2 ${
+          isCompleted ? "bg-gray-200 cursor-not-allowed" : "border-teal-400 focus:border-teal-600"
+        } shadow-lg mt-4 focus:outline-none`}
+        autoFocus // Automatically focus on input
+        disabled={isCompleted} // Disable input when text is completed
+        style={{
+          pointerEvents: "none", // Prevent all mouse interactions
+        }}
       />
     </div>
   );

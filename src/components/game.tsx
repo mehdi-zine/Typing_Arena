@@ -1,5 +1,5 @@
-import TypingText from "../components/typingText";
-import Warrior from "../components/warrior";
+import TypingText from "./typingText";
+import Warrior from "./warrior";
 
 const Game = () => {
   return (
