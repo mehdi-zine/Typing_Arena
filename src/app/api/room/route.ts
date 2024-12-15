@@ -1,6 +1,7 @@
 // app/api/room/route.ts
 import { NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
+import { pusherServer } from '@/lib/pusher';
 
 const prisma = new PrismaClient();
 
@@ -20,16 +21,33 @@ export async function POST(req: Request) {
     },
   });
 
+  let roomId;
+
   if (availableRoom) {
     // Join the room if available
+    roomId = availableRoom.id;
+
+    
+    try {
+    } catch (pusherError) {
+      // Log any errors that occur when triggering the Pusher event
+      console.error('Error triggering Pusher event:', pusherError);
+      return NextResponse.json({ error: 'Failed to trigger Pusher event' }, { status: 500 });
+    }
+    
     const updatedRoom = await prisma.room.update({
       where: { id: availableRoom.id },
       data: { player2Id: playerId },
+    });
+    
+    await pusherServer.trigger(`room-${roomId}`, 'player-joined', {
+      playerId,  // Emit the second player's ID to notify the first player
     });
 
     // Emit 'playerJoined' event using socket.io
     // Ensure that you emit to the correct room ID on the socket server
     // You need to emit this on the server-side (explained later)
+
 
     return NextResponse.json({
       message: 'Joined room successfully!',
@@ -44,11 +62,13 @@ export async function POST(req: Request) {
     },
   });
 
-  // Emit 'playerJoined' event for new room
+  roomId = newRoom.id;
 
+  // Emit 'playerJoined' event for new room
+  
   return NextResponse.json({
     message: 'Created and joined new room!',
-    roomId: newRoom.id,
+    roomId: roomId,
   });
 }
 

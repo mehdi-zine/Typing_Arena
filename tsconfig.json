@@ -22,6 +22,6 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/app/api/socket/route.ts", "src/app/api/websocket/route.js"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/app/api/socket/route.ts", "src/app/api/websocket/route.js", "src/lib/pusher.ts", "src/app/api/pusher/route.ts"],
   "exclude": ["node_modules"]
 }

@@ -24,6 +24,7 @@ const WarriorArena: React.FC<WarriorArenaProps> = ({ roomId, player1Id, player2I
 
     // Listen for the "player-joined" event
     channel.bind("player-joined", (data: { playerId: string }) => {
+        console.log('Player joined event received:', data);
       setCurrentPlayer2Id(data.playerId); // Update player2 when opponent joins
     });
 

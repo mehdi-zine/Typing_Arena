@@ -2,6 +2,8 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { v4 as uuidv4 } from "uuid";
+import { pusherServer } from '@/lib/pusher';  // Ensure you are using the correct Pusher server instance
+
 
 const MainCard = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -24,6 +26,14 @@ const MainCard = () => {
     setIsLoading(true);
 
     try {
+      // const pusherResponse = await fetch('/api/pusher', {
+      //   method: 'POST',
+      //   headers: {
+      //     'Content-Type': 'application/json',
+      //   },
+      //   body: JSON.stringify({roomId:"cm4owvh1w0006ufk8r6q5dpqi", playerId: guestId }), // Send the playerId (guestId) to the server
+      // });
+
       const response = await fetch('/api/room', {
         method: 'POST',
         headers: {
@@ -32,7 +42,7 @@ const MainCard = () => {
         body: JSON.stringify({ playerId: guestId }), // Send the playerId (guestId) to the server
       });
 
-      if (response.ok) {
+      if (response.ok)  {
         // Room was successfully created or joined
         const { roomId } = await response.json();
         router.push(`/game/${roomId}`);
