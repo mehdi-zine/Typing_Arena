@@ -9,9 +9,13 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@fanoutio/grip": "^4.3.0",
+    "@fanoutio/serve-grip": "^2.0.0",
     "@prisma/client": "^6.0.1",
     "next": "15.0.4",
     "prisma": "^6.0.1",
+    "pusher": "^5.2.0",
+    "pusher-js": "^8.4.0-rc2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "socket.io": "^4.8.1",
@@ -23,6 +27,7 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "@types/socket.io-client": "^1.4.36",
+    "@vercel/node": "^5.0.0",
     "eslint": "^8",
     "eslint-config-next": "15.0.4",
     "postcss": "^8",
