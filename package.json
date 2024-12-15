@@ -13,6 +13,8 @@
     "@fanoutio/serve-grip": "^2.0.0",
     "@next/env": "^15.1.0",
     "@prisma/client": "^6.0.1",
+    "iodash": "^0.0.1-security",
+    "lodash": "^4.17.21",
     "next": "15.0.4",
     "prisma": "^6.0.1",
     "pusher": "^5.2.0",
@@ -24,6 +26,7 @@
     "uuid": "^11.0.3"
   },
   "devDependencies": {
+    "@types/lodash": "^4.17.13",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",

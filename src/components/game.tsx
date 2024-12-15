@@ -35,7 +35,9 @@ const GamePage: React.FC<GameProps> = ({ room }) => {
           <h2 className="text-xl md:text-2xl font-bold text-teal-400">
             Type the following text:
           </h2>
-          <TypingText text="In the heat of the battle, speed and accuracy decide the victor." />
+          <TypingText 
+          text="In the heat of the battle, speed and accuracy decide the victor." 
+          roomId={room.id}/>
         </div>
       </div>
     </div>

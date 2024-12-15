@@ -5,15 +5,15 @@ import Image from "next/image";
 import { useGame } from "../context/GameContext";
 
 interface WarriorProps {
-  playerId: string; // Updated to string to match your schema
+  playerId: string|null; // Updated to string to match your schema
   flipped?: boolean; // Optional prop to flip the sprite horizontally
 }
 
 const Warrior: React.FC<WarriorProps> = ({ playerId, flipped = false }) => {
   const [framePos, setFramePos] = useState<number>(0);
-  const [row, setRow] = useState<number>(0); // Row selector (0: idle, 2: hitting)
-  const { player1Health, player2Health, lastHitPlayer } = useGame();
-  const health = playerId === "1" ? player1Health : player2Health; // Use "1" or "2" as player IDs
+  const [row, setRow] = useState<number>(0); 
+  const { player1Health, player2Health, player1Id, player2Id, lastHitPlayer } = useGame();
+  const [health,setHealth] = useState<number>(playerId === player1Id ? player1Health : player2Health); 
   const [count, setCount] = useState<number>(0);
   const [isHitting, setIsHitting] = useState(false);
   const [animation, setAnimation] = useState<"idle" | "hitting">("idle");
@@ -25,11 +25,19 @@ const Warrior: React.FC<WarriorProps> = ({ playerId, flipped = false }) => {
 
   // Update animation state based on last hit player
   useEffect(() => {
+    //playerId === player1Id ? updateHealth1(health) : updateHealth2(health);
+    //health = playerId === player1Id ? player1Health : player2Health; 
+    //console.log(health);
     if (lastHitPlayer === playerId) {
       setAnimation("hitting");
       setIsHitting(true);
+      //console.log("hello",health);
+    } 
+    else {
+      playerId === player1Id ? setHealth(player1Health) : setHealth(player2Health);
     }
-  }, [lastHitPlayer, playerId]);
+    
+  }, [lastHitPlayer, player1Health, player2Health, playerId]);
 
   // Sprite animation and row control
   useEffect(() => {
@@ -54,6 +62,7 @@ const Warrior: React.FC<WarriorProps> = ({ playerId, flipped = false }) => {
 
     return () => clearInterval(frameInterval); // Cleanup interval on unmount or animation change
   }, [animation, handleSpriteChange, isHitting, count]);
+
 
   return (
     <>

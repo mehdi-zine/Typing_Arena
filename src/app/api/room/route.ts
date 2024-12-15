@@ -64,7 +64,6 @@ export async function POST(req: Request) {
 
   roomId = newRoom.id;
 
-  // Emit 'playerJoined' event for new room
   
   return NextResponse.json({
     message: 'Created and joined new room!',
