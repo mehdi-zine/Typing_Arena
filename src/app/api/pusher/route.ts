@@ -4,24 +4,24 @@ import { NextResponse } from 'next/server';
 
 export async function POST(req: Request) {
   try {
-    const { roomId, guestId, damageAmount } = await req.json();
+    const { r, g, d } = await req.json();
 
     // Validate required fields
-    if (!roomId || !guestId || damageAmount === undefined) {
+    if (!r || !g || d === undefined) {
       return NextResponse.json({ error: 'Room ID, Player ID, and Damage Amount are required' }, { status: 400 });
     }
 
     // Trigger the hit event for Pusher
-    await pusherServer.trigger(`room-${roomId}`, 'player-hit', {
-      guestId,   // The player who dealt the damage
-      damageAmount, // The amount of damage dealt
+    await pusherServer.trigger(`room-${r}`, 'player-hit', {
+      g,   // The player who dealt the damage
+      d, // The amount of damage dealt
     });
 
     return NextResponse.json({ 
       message: 'Player hit event triggered successfully',
-      roomId,
-      guestId,
-      damageAmount,
+      r,
+      g,
+      d,
     });
   } catch (error) {
     console.error('Error triggering player-hit event:', error);

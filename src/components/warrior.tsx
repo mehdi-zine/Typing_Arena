@@ -12,7 +12,7 @@ interface WarriorProps {
 const Warrior: React.FC<WarriorProps> = ({ playerId, flipped = false }) => {
   const [framePos, setFramePos] = useState<number>(0);
   const [row, setRow] = useState<number>(0); 
-  const { player1Health, player2Health, player1Id, player2Id, lastHitPlayer } = useGame();
+  const { player1Health, player2Health, player1Id, lastHitPlayer } = useGame();
   const [health,setHealth] = useState<number>(playerId === player1Id ? player1Health : player2Health); 
   const [count, setCount] = useState<number>(0);
   const [isHitting, setIsHitting] = useState(false);
@@ -87,6 +87,7 @@ const Warrior: React.FC<WarriorProps> = ({ playerId, flipped = false }) => {
           ></div>
         </div>
       </div>
+      <div>{playerId}</div>
     </>
   );
 };

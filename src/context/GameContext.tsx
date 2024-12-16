@@ -7,63 +7,56 @@ interface GameState {
   player1Id: string;
   player2Id: string | null;
   lastHitPlayer: string | null;
+  guest: string | null;
+  ready: boolean;
   triggerAction: (playerId: string | null, damage: number, update?: boolean, roomId?: string) => void;
   initPlayer1: (playerId: string) => void;
+  initGuest: (guest: string | null) => void;
   initPlayer2: (playerId: string | null) => void;
-  updateHealth1: (health: number) => void;
-  updateHealth2: (health: number) => void;
 }
 
 const GameContext = createContext<GameState | undefined>(undefined);
-async function triggerPlayerHit(roomId: string, guestId: string | null, damageAmount: number) {
-  try {
-    const response = await fetch('/api/pusher', { // Your actual API route path
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        roomId,
-        guestId,
-        damageAmount
-      }),
-    });
-
-    const result = await response.json();
-    if (response.ok) {
-      console.log('Success:', result);
-    } else {
-      console.error('Error:', result.message, result.error);
-    }
-  } catch (error) {
-    console.error('Error during fetch:', error);
-  }
-}
 
 
 export const GameProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
+  const [ready, setReady] = useState(false);
   const [player1Health, setPlayer1Health] = useState(100);
   const [player2Health, setPlayer2Health] = useState(100);
-  const [player1Id, setPlayer1Id] = useState("");
-  const [player2Id, setPlayer2Id] = useState<string | null>("");
-  const [lastHitPlayer, setLastHitPlayer] = useState<string | null>(null); // Changed to string
+  const [player1Id, setPlayer1Id] = useState("defaultPlayer1");
+  const [player2Id, setPlayer2Id] = useState<string | null>("defaultPlayer2");
+  const [guest, setGuest] = useState<string | null>("");
+  const [lastHitPlayer, setLastHitPlayer] = useState<string | null>(null);// Changed to string
 
-  const initPlayer1 = (playerId: string) => setPlayer1Id(playerId);
-  const updateHealth1 = (health: number) => setPlayer1Health(health);
-  const updateHealth2 = (health: number) => setPlayer2Health(player2Health - health);
 
-  const initPlayer2 = (playerId: string | null) => setPlayer2Id(playerId);
+  const initGuest = (guest: string | null) => setGuest(guest);
+  const initPlayer1 = (playerId: string) => {
+    setPlayer1Id(playerId);
+    checkReady();
+  };
+  
+  const initPlayer2 = (playerId: string | null) => {
+    setPlayer2Id(playerId);
+    checkReady();
+  };
+
+  const checkReady = () => {
+    if (player1Id && player2Id !== null) {
+      setReady(true);
+    }
+  };
 
   const triggerAction = (playerId: string | null, damage: number, update: boolean = false, roomId: string = "") => {
-    //console.log(player1Health, player2Health);
-    // console.log("TriggerAction Called:");
-    // console.log("Player ID:", playerId);
-    // console.log("Damage:", damage);
-    // console.log("Update Flag:", update);
-    // console.log("Room ID:", roomId);
-    // console.log("Current Health: ", { player1Health, player2Health });
+    if (!player1Id || !player2Id) {
+      console.error(
+        "Player IDs not initialized! Cannot process action:",
+        { player1Id, player2Id }
+      );
+      return;
+    }
+  
+    console.log(`Triggering action for playerId: ${playerId}`);
     if (playerId === player1Id) { // Player 1
       setPlayer2Health((prev) => Math.max(0, prev - damage));
       setLastHitPlayer(playerId);
@@ -81,7 +74,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({
 
   return (
     <GameContext.Provider
-      value={{ player1Health, player2Health, player1Id, player2Id, lastHitPlayer, triggerAction, initPlayer1, initPlayer2, updateHealth1, updateHealth2 }}
+      value={{ player1Health, player2Health, player1Id, player2Id, lastHitPlayer, triggerAction, initPlayer1, initPlayer2, guest, initGuest, ready }}
     >
       {children}
     </GameContext.Provider>

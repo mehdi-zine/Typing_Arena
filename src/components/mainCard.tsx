@@ -25,13 +25,6 @@ const MainCard = () => {
     setIsLoading(true);
 
     try {
-      // const pusherResponse = await fetch('/api/pusher', {
-      //   method: 'POST',
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //   },
-      //   body: JSON.stringify({roomId:"cm4owvh1w0006ufk8r6q5dpqi", playerId: guestId }), // Send the playerId (guestId) to the server
-      // });
 
       const response = await fetch('/api/room', {
         method: 'POST',

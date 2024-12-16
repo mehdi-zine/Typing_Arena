@@ -11,7 +11,7 @@ interface TypingTextProps {
 const TypingText: React.FC<TypingTextProps> = ({ text = '', roomId = '' }) => {
   const [guestId, setGuestId] = useState<string | null>(null);
   const [inputValue, setInputValue] = useState("");
-  const { triggerAction } = useGame();
+  const { triggerAction, guest } = useGame();
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
   const [isCompleted, setIsCompleted] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -23,7 +23,9 @@ const TypingText: React.FC<TypingTextProps> = ({ text = '', roomId = '' }) => {
   const processedWords = useRef<number[]>([]); // Tracks processed words
   const accumulatedDamage = useRef<number>(0); // Tracks accumulated damage
   const lastActionTime = useRef<number>(Date.now()); // Tracks last action time
-  const API_THROTTLE_INTERVAL = 9000; // Interval between API requests (in milliseconds)
+  const idleTimeout = useRef<NodeJS.Timeout | null>(null); // Tracks idle timeout
+  const API_THROTTLE_INTERVAL = 800; // Interval between API requests (in milliseconds)
+  const IDLE_DELAY = 500; // Time to wait before flushing after user stops typing (in milliseconds)
 
   // Function to send accumulated damage in one request
   const triggerPlayerHit = async (damageAmount: number) => {
@@ -34,9 +36,9 @@ const TypingText: React.FC<TypingTextProps> = ({ text = '', roomId = '' }) => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          roomId,
-          guestId,
-          damageAmount,
+          r: roomId,
+          g: guestId,
+          d: damageAmount,
         }),
       });
 
@@ -50,20 +52,29 @@ const TypingText: React.FC<TypingTextProps> = ({ text = '', roomId = '' }) => {
     }
   };
 
-  // Process and send accumulated damage after a delay
+  // Process and send accumulated damage after a delay or on idle
   const processAndSendDamage = async () => {
-    const currentTime = Date.now();
-    const timeDifference = currentTime - lastActionTime.current;
+  const currentTime = Date.now();
+  const timeDifference = currentTime - lastActionTime.current;
 
-    if (timeDifference >= API_THROTTLE_INTERVAL && accumulatedDamage.current > 0) {
-      // Send the accumulated damage to the server
+  if (timeDifference >= API_THROTTLE_INTERVAL && accumulatedDamage.current > 0) {
+    // Send the accumulated damage to the server
+    await triggerPlayerHit(accumulatedDamage.current);
+
+    // Reset accumulated damage after sending
+    accumulatedDamage.current = 0;
+
+    // Update the last action time to prevent immediate resending
+    lastActionTime.current = currentTime;
+  }
+};
+
+
+  // Force flush remaining damage when idle
+  const flushOnIdle = async () => {
+    if (accumulatedDamage.current > 0) {
       await triggerPlayerHit(accumulatedDamage.current);
-
-      // Reset accumulated damage after sending
       accumulatedDamage.current = 0;
-
-      // Update the last action time
-      lastActionTime.current = currentTime;
     }
   };
 
@@ -86,7 +97,7 @@ const TypingText: React.FC<TypingTextProps> = ({ text = '', roomId = '' }) => {
         processedWords.current.push(currentWordIndex); // Mark the word as processed
 
         // Apply damage immediately for the correct word, without over-decreasing health
-        triggerAction(guestId, damagePerWord, true, roomId);
+        triggerAction(guestId, damagePerWord);
 
         // Accumulate damage for requests
         accumulatedDamage.current += damagePerWord;
@@ -94,21 +105,25 @@ const TypingText: React.FC<TypingTextProps> = ({ text = '', roomId = '' }) => {
         // Process and send accumulated damage after a delay
         processAndSendDamage();
       }
+
+      // Reset the idle timer
+      if (idleTimeout.current) {
+        clearTimeout(idleTimeout.current);
+      }
+      idleTimeout.current = setTimeout(() => {
+        flushOnIdle();
+      }, IDLE_DELAY);
     }
   };
 
   useEffect(() => {
     if (currentWordIndex === totalWords) {
       setIsCompleted(true); // Mark the text as completed
+
+      // Flush any remaining damage on completion
+      flushOnIdle();
     }
   }, [currentWordIndex, totalWords]);
-
-  useEffect(() => {
-    const storedGuestId = localStorage.getItem("guestId");
-    if (storedGuestId) {
-      setGuestId(storedGuestId); // Store the guestId in state
-    }
-  }, []);
 
   useEffect(() => {
     const handleFocusInput = () => {
@@ -123,6 +138,13 @@ const TypingText: React.FC<TypingTextProps> = ({ text = '', roomId = '' }) => {
     return () => {
       window.removeEventListener("click", handleFocusInput);
     };
+  }, []);
+
+  useEffect(() => {
+    const storedGuestId = localStorage.getItem("guestId");
+    if (storedGuestId) {
+      setGuestId(storedGuestId); // Store the guestId in state
+    }
   }, []);
 
   return (
@@ -206,3 +228,4 @@ const TypingText: React.FC<TypingTextProps> = ({ text = '', roomId = '' }) => {
 };
 
 export default TypingText;
+
