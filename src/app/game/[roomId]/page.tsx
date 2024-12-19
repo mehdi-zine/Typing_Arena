@@ -18,9 +18,11 @@ const fetchRoomData = async (roomId: string) => {
 };
 
 // RoomPage component
-export default async function RoomPage({ params }: { params: { roomId: string } }) {
-  // Fetch the roomId from params (params are automatically awaited in the App Router)
-  const { roomId } =  params;
+export default async function RoomPage(props: {
+  params: Promise<{ roomId: string }>;
+}) {
+  const params = await props.params; // Awaiting `params` as per the updated docs
+  const { roomId } = params;
 
   // Fetch room data based on roomId
   const cookieStore = await cookies();
