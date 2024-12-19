@@ -2,6 +2,7 @@
 import TypingText from "./typingText";
 import WarriorArena from "./warriorArena";
 
+
 interface GameProps {
   room: {
     id: string;
@@ -9,6 +10,7 @@ interface GameProps {
     player2Id: string | null;
     isActive: boolean;
     createdAt: Date;
+    guestId: string | undefined;
   };
 }
 
@@ -28,7 +30,7 @@ const GamePage: React.FC<GameProps> = ({ room }) => {
       {/* Content */}
       <div className="relative z-10 flex flex-col items-center justify-between min-h-screen">
         {/* Warrior Arena */}
-        <WarriorArena roomId={room.id} player1Id={room.player1Id} player2Id={room.player2Id} />
+        <WarriorArena player1={room.player1Id} player2={room.player2Id} guestId={room.guestId}/>
 
         {/* Typing Prompt */}
         <div className="bg-gray-700 bg-opacity-90 rounded-lg p-6 shadow-lg mx-6 max-w-4xl text-center mb-10">
@@ -37,7 +39,6 @@ const GamePage: React.FC<GameProps> = ({ room }) => {
           </h2>
           <TypingText 
           text="a a a a a a a" 
-          roomId={room.id}
           />
         </div>
       </div>

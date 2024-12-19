@@ -41,7 +41,7 @@ export async function POST(req: Request) {
     });
     
     await pusherServer.trigger(`room-${roomId}`, 'player-joined', {
-      playerId,  // Emit the second player's ID to notify the first player
+      playerId,
     });
 
     // Emit 'playerJoined' event using socket.io

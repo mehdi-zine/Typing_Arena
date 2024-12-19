@@ -11,14 +11,23 @@ const MainCard = () => {
 
   useEffect(() => {
     // Check if guestId exists, otherwise generate one and save it
-    let storedGuestId = localStorage.getItem("guestId");
+    let storedGuestId = getCookie('guestId');
+
     if (!storedGuestId) {
-      storedGuestId = uuidv4();
-      localStorage.setItem("guestId", storedGuestId);
+      storedGuestId = uuidv4(); // Generate a new guestId if not found
+      document.cookie = `guestId=${storedGuestId}; path=/; max-age=31536000`; // Store in cookie for 1 year
     }
+
     setGuestId(storedGuestId);
 
   }, []);
+
+  const getCookie = (name: string): string | null => {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop()?.split(';').shift() || null;
+    return null;
+  };
   const handlePlayNow = async () => {
     // Ensure that the socket is connected and the playerId (socket.id) is available
 

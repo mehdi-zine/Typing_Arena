@@ -5,7 +5,7 @@ import Image from "next/image";
 import { useGame } from "../context/GameContext";
 
 interface WarriorProps {
-  playerId: string|null; // Updated to string to match your schema
+  playerId: string|null | undefined; // Updated to string to match your schema
   flipped?: boolean; // Optional prop to flip the sprite horizontally
 }
 
@@ -87,7 +87,6 @@ const Warrior: React.FC<WarriorProps> = ({ playerId, flipped = false }) => {
           ></div>
         </div>
       </div>
-      <div>{playerId}</div>
     </>
   );
 };
