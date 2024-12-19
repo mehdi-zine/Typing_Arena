@@ -28,21 +28,21 @@ export async function POST(req: Request) {
     roomId = availableRoom.id;
 
     
-    try {
-    } catch (pusherError) {
-      // Log any errors that occur when triggering the Pusher event
-      console.error('Error triggering Pusher event:', pusherError);
-      return NextResponse.json({ error: 'Failed to trigger Pusher event' }, { status: 500 });
-    }
     
     const updatedRoom = await prisma.room.update({
       where: { id: availableRoom.id },
       data: { player2Id: playerId },
     });
     
-    await pusherServer.trigger(`room-${roomId}`, 'player-joined', {
-      playerId,
-    });
+    try {
+      await pusherServer.trigger(`room-${roomId}`, 'player-joined', {
+        playerId,
+      });
+    } catch (pusherError) {
+      // Log any errors that occur when triggering the Pusher event
+      console.error('Error triggering Pusher event:', pusherError);
+      return NextResponse.json({ error: 'Failed to trigger Pusher event' }, { status: 500 });
+    }
 
     // Emit 'playerJoined' event using socket.io
     // Ensure that you emit to the correct room ID on the socket server
