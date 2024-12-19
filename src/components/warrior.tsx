@@ -25,19 +25,15 @@ const Warrior: React.FC<WarriorProps> = ({ playerId, flipped = false }) => {
 
   // Update animation state based on last hit player
   useEffect(() => {
-    //playerId === player1Id ? updateHealth1(health) : updateHealth2(health);
-    //health = playerId === player1Id ? player1Health : player2Health; 
-    //console.log(health);
     if (lastHitPlayer === playerId) {
       setAnimation("hitting");
       setIsHitting(true);
-      //console.log("hello",health);
     } 
     else {
       playerId === player1Id ? setHealth(player1Health) : setHealth(player2Health);
     }
     
-  }, [lastHitPlayer, player1Health, player2Health, playerId]);
+  }, [lastHitPlayer, player1Health, player2Health, player1Id]);
 
   // Sprite animation and row control
   useEffect(() => {

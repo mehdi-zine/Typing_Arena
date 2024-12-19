@@ -44,7 +44,7 @@ const PusherManager: React.FC<PusherManagerProps> = ({ roomId, player1, guestId 
       pusher.unsubscribe(`room-${roomId}`);
       pusher.disconnect();
     };
-  }, [player1Id, player2Id]);
+  }, [player2Id, player1Id]);
 
   return null; // No UI for this component
 };

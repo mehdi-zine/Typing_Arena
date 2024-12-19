@@ -39,17 +39,14 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const initGuest = (guest: string | undefined) =>{
      setGuest(guest); 
-     console.log(guest);
   }
   const initPlayer1 = (playerId: string) => {
     setPlayer1Id(playerId);
-    console.log("player 1")
     checkReady();
   };
   
   const initPlayer2 = (playerId: string | null) => {
     setPlayer2Id(playerId);
-    console.log("player 2");
     checkReady();
   };
 
@@ -59,7 +56,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   };
 
-  const triggerAttack = (playerId: string | undefined, damage: number, update: boolean = false, roomId: string = "") => {
+  const triggerAttack = (playerId: string | undefined, damage: number) => {
     if (!player1Id || !player2Id) {
       console.error(
         "Player IDs not initialized! Cannot process action:",

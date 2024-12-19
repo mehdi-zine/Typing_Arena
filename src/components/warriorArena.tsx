@@ -1,7 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import Pusher from "pusher-js";
+import { useEffect } from "react";
 import Warrior from "./warrior";
 import { useGame } from "@/context/GameContext";
 
@@ -15,9 +14,8 @@ const WarriorArena: React.FC<WarriorArenaProps> = ({ player1, player2, guestId }
   const { player2Id, initPlayer2 } = useGame();
 
   useEffect(() => {
-    console.log(player1, guestId);
     if(player2 != null) initPlayer2(player2);
-  },[])
+  },[player1, player2, initPlayer2])
 
   return (
     <div className="flex justify-center items-center gap-20 mt-10 relative">
