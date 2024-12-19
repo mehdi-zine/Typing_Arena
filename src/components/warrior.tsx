@@ -30,7 +30,11 @@ const Warrior: React.FC<WarriorProps> = ({ playerId, flipped = false }) => {
       setIsHitting(true);
     } 
     else {
-      playerId === player1Id ? setHealth(player1Health) : setHealth(player2Health);
+      if (playerId === player1Id) {
+        setHealth(player1Health);
+      } else {
+        setHealth(player2Health);
+      }
     }
     
   }, [lastHitPlayer, player1Health, player2Health, player1Id, playerId]);
