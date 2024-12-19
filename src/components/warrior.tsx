@@ -33,7 +33,7 @@ const Warrior: React.FC<WarriorProps> = ({ playerId, flipped = false }) => {
       playerId === player1Id ? setHealth(player1Health) : setHealth(player2Health);
     }
     
-  }, [lastHitPlayer, player1Health, player2Health, player1Id]);
+  }, [lastHitPlayer, player1Health, player2Health, player1Id, playerId]);
 
   // Sprite animation and row control
   useEffect(() => {

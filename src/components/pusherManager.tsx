@@ -19,6 +19,10 @@ const PusherManager: React.FC<PusherManagerProps> = ({ roomId, player1, guestId 
     initRoom(roomId);
     initGuest(guestId);
     initPlayer1(player1);
+  },[player1Id, player2Id, initRoom, initGuest, initPlayer1])
+
+
+  useEffect(() => {
     // Initialize Pusher
     const pusher = new Pusher('45e14c6ee9972b483030', {
       cluster: 'eu',
@@ -42,9 +46,9 @@ const PusherManager: React.FC<PusherManagerProps> = ({ roomId, player1, guestId 
     // Cleanup
     return () => {
       pusher.unsubscribe(`room-${roomId}`);
-      pusher.disconnect();
+      //pusher.disconnect();
     };
-  }, [player2Id, player1Id]);
+  }, [player1Id, player2Id]);
 
   return null; // No UI for this component
 };
