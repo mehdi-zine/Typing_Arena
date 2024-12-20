@@ -35,19 +35,16 @@ const PusherManager: React.FC<PusherManagerProps> = ({ roomId, player1, player2,
       pusherInstance.current = pusher;
       
       channel.bind('pusher:subscription_succeeded', () => {
-      console.log('Subscription succeeded');
       setIsSubscribed(true); // Mark channel as ready
     });
 
     // Listen to events and update the context
     channel.bind('player-joined', (data: { playerId: string }) => {
-      console.log("player-joined");
       if(player2Id == null) initPlayer2(data.playerId); // Update player2 in context
     });
     
-    channel.bind('start-game', (data: any) => {
+    channel.bind('start-game', () => {
       if(!gameStarted){
-        console.log("Countdown Started1");
         initCountdown(true);
         initGame(true);
       }
@@ -55,7 +52,6 @@ const PusherManager: React.FC<PusherManagerProps> = ({ roomId, player1, player2,
     
     channel.bind('player-hit', (data: { g: string; d: number }) => {
       if(data.g == guestId){
-        console.log("Ignoring event: This browser initiated the attack.");
         return;
       }
       triggerAttack(data.g , data.d);
@@ -70,7 +66,6 @@ const PusherManager: React.FC<PusherManagerProps> = ({ roomId, player1, player2,
 
   useEffect(() => {
     if (isSubscribed && player2 && !gameStarted) {
-      console.log('Triggering start-game event');
       setIsSubscribed(false);
       sendPusherEvent('start-game');
     }

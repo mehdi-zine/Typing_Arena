@@ -19,10 +19,24 @@ interface GameState {
   initGuest: (guest: string | undefined) => void;
   initPlayer2: (playerId: string | null) => void;
   initGame: (game: boolean) => void;
-  sendPusherEvent: (eventName: string, payload?: { [key: string]: any }) => void;
-}
+  sendPusherEvent: <T extends keyof EventPayloads>(
+    eventName: T,
+    payload?: EventPayloads[T] // Payload type inferred based on the event name
+  ) => void;}
 
 const GameContext = createContext<GameState | undefined>(undefined);
+
+type PlayerHitPayload = {
+  damage: number;
+};
+
+type StartGamePayload = {}; // Empty object for start-game
+
+type EventPayloads = {
+  "player-hit": PlayerHitPayload;
+  "start-game": StartGamePayload;
+  // Add more event types here if necessary
+};
 
 
 export const GameProvider: React.FC<{ children: React.ReactNode }> = ({
@@ -97,14 +111,19 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({
 
   };
 
-  const sendPusherEvent = async (eventName: string, payload: { [key: string]: any } = {}) => {
+  
+  const sendPusherEvent = async <T extends keyof EventPayloads>(
+    eventName: T,
+    payload: EventPayloads[T] = {} as EventPayloads[T] // Default to an empty object if no payload is provided
+  ) => {
     try {
       // Assuming `room` and `guest` are available in the context state
       const commonPayload = { r: room }; // Room ID is always required
   
       let specificPayload = {};
+  
       if (eventName === "player-hit") {
-        const { damage } = payload;
+        const { damage } = payload as PlayerHitPayload; // Type casting to specific payload type
         if (!guest || damage === undefined) {
           throw new Error("Missing required fields for player-hit event");
         }
@@ -132,7 +151,6 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({
       console.error("Error during sendPusherEvent:", error);
     }
   };
-  
   
   
   

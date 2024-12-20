@@ -1,5 +1,5 @@
 'use client'
-import React, { useEffect, useState, useContext } from "react";
+import React, { useEffect, useState } from "react";
 import { useGame } from "@/context/GameContext"; // Import your existing GameContext
 
 const CountdownPopup: React.FC = () => {
