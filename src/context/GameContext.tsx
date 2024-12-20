@@ -30,7 +30,7 @@ type PlayerHitPayload = {
   damage: number;
 };
 
-type StartGamePayload = {}; // Empty object for start-game
+type StartGamePayload = object; // Empty object for start-game
 
 type EventPayloads = {
   "player-hit": PlayerHitPayload;
