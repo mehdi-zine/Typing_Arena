@@ -13,7 +13,7 @@ const TypingText: React.FC<TypingTextProps> = ({ text = "" }) => {
   const [isCompleted, setIsCompleted] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const { triggerAttack, sendPusherEvent, guest } = useGame();
+  const { triggerAttack, sendPusherEvent, guest, gameStarted } = useGame();
 
   const words = text.split(" ");
   const totalWords = words.length;
@@ -36,7 +36,7 @@ const TypingText: React.FC<TypingTextProps> = ({ text = "" }) => {
 
       // Trigger attack without worrying about throttling or accumulation
       triggerAttack(guest, damagePerWord);
-      sendPusherEvent("player-hit", damagePerWord);
+      sendPusherEvent("player-hit", {damage: damagePerWord});
 
       // Mark as completed if all words are typed
       if (currentWordIndex + 1 === totalWords) {
@@ -134,7 +134,7 @@ const TypingText: React.FC<TypingTextProps> = ({ text = "" }) => {
             : "border-teal-400 focus:border-teal-600"
         } shadow-lg mt-4 focus:outline-none`}
         autoFocus // Automatically focus on input
-        disabled={isCompleted} // Disable input when text is completed
+        disabled={!gameStarted || isCompleted} // Disable input when text is completed
       />
     </div>
   );

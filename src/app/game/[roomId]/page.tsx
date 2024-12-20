@@ -37,13 +37,13 @@ export default async function RoomPage(props: {
 
   const roomWithGuestId = {
     ...room,
-    guestId, // Add the guestId property to the room object
+    guestId, 
   };
 
 
   return (
     <GameProvider>
-      <PusherManager roomId={room.id} player1={room.player1Id} guestId={guestId}/>
+      <PusherManager roomId={room.id} player1={room.player1Id} guestId={guestId} player2={room.player2Id}/>
       <GamePage room={roomWithGuestId} />
     </GameProvider>
   );

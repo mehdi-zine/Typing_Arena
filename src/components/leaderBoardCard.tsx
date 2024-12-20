@@ -6,7 +6,6 @@ const LeaderBoardCard = () => {
   
         {/* Card Content */}
         <p className="text-lg text-gray-600 mb-6">
-          Get ready to dive into an exciting adventure. Click below to start playing!
         </p>
 
       </div>

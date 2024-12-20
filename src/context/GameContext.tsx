@@ -7,14 +7,19 @@ interface GameState {
   player1Id: string;
   player2Id: string | null;
   lastHitPlayer: string | undefined;
+  room: string;
   guest: string | undefined;
   ready: boolean;
+  gameStarted: boolean;
+  isCountdownActive: boolean;
+  initCountdown: (active: boolean) => void;
   initRoom: (roomId: string) => void;
   triggerAttack: (playerId: string | undefined, damage: number, update?: boolean, roomId?: string) => void;
   initPlayer1: (playerId: string) => void;
   initGuest: (guest: string | undefined) => void;
   initPlayer2: (playerId: string | null) => void;
-  sendPusherEvent: (eventName: string, damage: number) => void;
+  initGame: (game: boolean) => void;
+  sendPusherEvent: (eventName: string, payload?: { [key: string]: any }) => void;
 }
 
 const GameContext = createContext<GameState | undefined>(undefined);
@@ -23,7 +28,9 @@ const GameContext = createContext<GameState | undefined>(undefined);
 export const GameProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
+  const [isCountdownActive, setIsCountdownActive] = useState(false);
   const [ready, setReady] = useState(false);
+  const [gameStarted, setGameStarted] = useState(false);
   const [room , setRoom] = useState("");
   const [player1Health, setPlayer1Health] = useState(100);
   const [player2Health, setPlayer2Health] = useState(100);
@@ -32,6 +39,14 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({
   const [guest, setGuest] = useState<string | undefined>(undefined);
   const [lastHitPlayer, setLastHitPlayer] = useState<string | undefined>(undefined);// Changed to string
 
+
+  const initCountdown = (active: boolean) =>{
+    setIsCountdownActive(active);
+  } 
+
+  const initGame = (game: boolean) => {
+    setGameStarted(game);
+  }
 
   const initRoom = (room: string) =>{
     setRoom(room); 
@@ -51,7 +66,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   const checkReady = () => {
-    if (player1Id && player2Id !== null) {
+    if (player1Id && player2Id !== null && room) {
       setReady(true);
     }
   };
@@ -82,18 +97,30 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({
 
   };
 
-   const sendPusherEvent = async (eventName: string, damage: number) => {
+  const sendPusherEvent = async (eventName: string, payload: { [key: string]: any } = {}) => {
     try {
       // Assuming `room` and `guest` are available in the context state
+      const commonPayload = { r: room }; // Room ID is always required
+  
+      let specificPayload = {};
+      if (eventName === "player-hit") {
+        const { damage } = payload;
+        if (!guest || damage === undefined) {
+          throw new Error("Missing required fields for player-hit event");
+        }
+        specificPayload = { d: damage, g: guest }; // Include damage and guest ID
+      } else if (eventName === "start-game") {
+        // No additional fields needed for start-game
+      } else {
+        throw new Error("Invalid event name");
+      }
+  
+      const body = JSON.stringify({ eventName, ...commonPayload, ...specificPayload });
+  
       const response = await fetch("/api/pusher", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          eventName,
-          d: damage, // Send damage as 'd'
-          r: room,   // Add room ID from context state
-          g: guest,  // Add guest ID from context state
-        }),
+        body,
       });
   
       if (!response.ok) {
@@ -102,15 +129,17 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({
         console.log("Success:", await response.json());
       }
     } catch (error) {
-      console.error("Error during fetch:", error);
+      console.error("Error during sendPusherEvent:", error);
     }
   };
+  
+  
   
   
 
   return (
     <GameContext.Provider
-      value={{ player1Health, player2Health, player1Id, player2Id, lastHitPlayer, triggerAttack, initPlayer1, initPlayer2, guest, initGuest, ready, sendPusherEvent, initRoom }}
+      value={{ player1Health, player2Health, player1Id, player2Id, lastHitPlayer, triggerAttack, initPlayer1, initPlayer2, guest, initGuest, ready, sendPusherEvent, initRoom, initCountdown, isCountdownActive, room, initGame, gameStarted }}
     >
       {children}
     </GameContext.Provider>
