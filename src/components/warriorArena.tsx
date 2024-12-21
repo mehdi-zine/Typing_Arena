@@ -11,13 +11,13 @@ interface WarriorArenaProps {
 }
 
 const WarriorArena: React.FC<WarriorArenaProps> = ({ player1, player2, guestId }) => {
-  const { player2Id, initPlayer2 } = useGame();
+  const { player2Id, initPlayer2, ready } = useGame();
 
   useEffect(() => {
     if(player2 != null){
       initPlayer2(player2);
     } 
-  },[player1, player2, initPlayer2])
+  },[player2, initPlayer2, player2Id, ready])
 
   return (
     <div className="flex justify-center items-center gap-20 mt-10 relative">

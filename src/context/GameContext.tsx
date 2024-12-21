@@ -5,7 +5,7 @@ interface GameState {
   player1Health: number;
   player2Health: number;
   player1Id: string;
-  player2Id: string | null;
+  player2Id: string;
   lastHitPlayer: string | undefined;
   room: string;
   guest: string | undefined;
@@ -17,7 +17,7 @@ interface GameState {
   triggerAttack: (playerId: string | undefined, damage: number, update?: boolean, roomId?: string) => void;
   initPlayer1: (playerId: string) => void;
   initGuest: (guest: string | undefined) => void;
-  initPlayer2: (playerId: string | null) => void;
+  initPlayer2: (playerId: string) => void;
   initGame: (game: boolean) => void;
   sendPusherEvent: <T extends keyof EventPayloads>(
     eventName: T,
@@ -49,7 +49,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({
   const [player1Health, setPlayer1Health] = useState(100);
   const [player2Health, setPlayer2Health] = useState(100);
   const [player1Id, setPlayer1Id] = useState("");
-  const [player2Id, setPlayer2Id] = useState<string | null>(null);
+  const [player2Id, setPlayer2Id] = useState<string>("");
   const [guest, setGuest] = useState<string | undefined>(undefined);
   const [lastHitPlayer, setLastHitPlayer] = useState<string | undefined>(undefined);// Changed to string
 
@@ -74,7 +74,8 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({
     checkReady();
   };
   
-  const initPlayer2 = (playerId: string | null) => {
+  const initPlayer2 = (playerId: string) => {
+    console.log("player2 Initialized")
     setPlayer2Id(playerId);
     checkReady();
   };
@@ -129,13 +130,13 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({
         }
         specificPayload = { d: damage, g: guest }; // Include damage and guest ID
       } else if (eventName === "start-game") {
-        // No additional fields needed for start-game
+        specificPayload = { g: guest };
       } else {
         throw new Error("Invalid event name");
       }
   
       const body = JSON.stringify({ eventName, ...commonPayload, ...specificPayload });
-  
+      console.log(body);
       const response = await fetch("/api/pusher", {
         method: "POST",
         headers: { "Content-Type": "application/json" },

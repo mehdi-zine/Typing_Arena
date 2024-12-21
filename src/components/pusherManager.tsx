@@ -43,7 +43,9 @@ const PusherManager: React.FC<PusherManagerProps> = ({ roomId, player1, player2,
       if(player2Id == null) initPlayer2(data.playerId); // Update player2 in context
     });
     
-    channel.bind('start-game', () => {
+    channel.bind('start-game', (data: {g: string}) => {
+      console.log(data);
+      if (!player2) initPlayer2(data.g); // Update player2 in context
       if(!gameStarted){
         initCountdown(true);
         initGame(true);
@@ -65,11 +67,11 @@ const PusherManager: React.FC<PusherManagerProps> = ({ roomId, player1, player2,
   }, [player1Id, player2Id, roomId, guestId, isCountdownActive, gameStarted]);
 
   useEffect(() => {
-    if (isSubscribed && player2 && !gameStarted) {
+    if (isSubscribed && player2Id !="" && !gameStarted) {
       setIsSubscribed(false);
       sendPusherEvent('start-game');
     }
-  }, [isSubscribed, player2, gameStarted, sendPusherEvent]);
+  }, [isSubscribed, player2Id, gameStarted, sendPusherEvent]);
 
   
 

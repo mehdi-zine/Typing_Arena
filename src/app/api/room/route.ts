@@ -1,7 +1,6 @@
 // app/api/room/route.ts
 import { NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
-import { pusherServer } from '@/lib/pusher';
 
 const prisma = new PrismaClient();
 
@@ -33,16 +32,6 @@ export async function POST(req: Request) {
       where: { id: availableRoom.id },
       data: { player2Id: playerId },
     });
-    
-    try {
-      await pusherServer.trigger(`room-${roomId}`, 'player-joined', {
-        playerId,
-      });
-    } catch (pusherError) {
-      // Log any errors that occur when triggering the Pusher event
-      console.error('Error triggering Pusher event:', pusherError);
-      return NextResponse.json({ error: 'Failed to trigger Pusher event' }, { status: 500 });
-    }
 
     // Emit 'playerJoined' event using socket.io
     // Ensure that you emit to the correct room ID on the socket server

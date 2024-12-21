@@ -35,17 +35,20 @@ export async function POST(req: Request) {
 
     // Handle start-game event
     else if (eventName === 'start-game') {
+
       // Only trigger start game event
       const startTimestamp = Date.now();
 
       // Trigger the start game event for Pusher
       await pusherServer.trigger(`room-${r}`, 'start-game', {
         startTimestamp,
+        g
       });
 
       return NextResponse.json({
         message: 'Start game event triggered successfully',
         eventName,
+        g,
         r,
         startTimestamp,
       });
