@@ -12,7 +12,7 @@ interface PusherManagerProps {
 }
 
 const PusherManager: React.FC<PusherManagerProps> = ({ roomId, player1, player2, guestId }) => {
-  const { initPlayer1, initPlayer2, triggerAttack, player2Id, initGuest, initRoom, player1Id, isCountdownActive, initCountdown, sendPusherEvent, gameStarted, initGame } = useGame();
+  const { initPlayer1, initPlayer2, triggerAttack, player2Id, initGuest, initRoom, player1Id, isCountdownActive, initCountdown, sendPusherEvent, gameStarted, initGame, finishGame, gameResult } = useGame();
   const pusherInstance = useRef<Pusher | null>(null);
   const [isSubscribed, setIsSubscribed] = useState(false); // Track subscription status
 
@@ -38,10 +38,6 @@ const PusherManager: React.FC<PusherManagerProps> = ({ roomId, player1, player2,
       setIsSubscribed(true); // Mark channel as ready
     });
 
-    // Listen to events and update the context
-    channel.bind('player-joined', (data: { playerId: string }) => {
-      if(player2Id == null) initPlayer2(data.playerId); // Update player2 in context
-    });
     
     channel.bind('start-game', (data: {g: string}) => {
       console.log(data);
@@ -50,6 +46,11 @@ const PusherManager: React.FC<PusherManagerProps> = ({ roomId, player1, player2,
         initCountdown(true);
         initGame(true);
       }
+    });
+
+    channel.bind('finish-game', (data: {g: string}) => {
+      if(gameResult == "")
+        finishGame(data.g);
     });
     
     channel.bind('player-hit', (data: { g: string; d: number }) => {
@@ -64,7 +65,7 @@ const PusherManager: React.FC<PusherManagerProps> = ({ roomId, player1, player2,
       pusher.unsubscribe(`room-${roomId}`);
       pusherInstance.current = null;
     };
-  }, [player1Id, player2Id, roomId, guestId, isCountdownActive, gameStarted]);
+  }, [player1Id, player2Id, roomId, guestId, isCountdownActive, gameStarted, gameResult]);
 
   useEffect(() => {
     if (isSubscribed && player2Id !="" && !gameStarted) {

@@ -41,6 +41,7 @@ const TypingText: React.FC<TypingTextProps> = ({ text = "" }) => {
       // Mark as completed if all words are typed
       if (currentWordIndex + 1 === totalWords) {
         setIsCompleted(true);
+        sendPusherEvent("finish-game", { guest });
       }
     }
   };

@@ -54,6 +54,26 @@ export async function POST(req: Request) {
       });
     }
 
+    else if (eventName === 'finish-game') {
+
+      // Only trigger start game event
+      const startTimestamp = Date.now();
+
+      // Trigger the start game event for Pusher
+      await pusherServer.trigger(`room-${r}`, 'finish-game', {
+        startTimestamp,
+        g
+      });
+
+      return NextResponse.json({
+        message: 'Finish game event triggered successfully',
+        eventName,
+        g,
+        r,
+        startTimestamp,
+      });
+    }
+
     // Handle invalid eventName
     return NextResponse.json({ error: 'Invalid event eventName' }, { status: 400 });
 

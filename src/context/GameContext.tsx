@@ -11,6 +11,7 @@ interface GameState {
   guest: string | undefined;
   ready: boolean;
   gameStarted: boolean;
+  gameResult: string;
   isCountdownActive: boolean;
   initCountdown: (active: boolean) => void;
   initRoom: (roomId: string) => void;
@@ -19,6 +20,7 @@ interface GameState {
   initGuest: (guest: string | undefined) => void;
   initPlayer2: (playerId: string) => void;
   initGame: (game: boolean) => void;
+  finishGame: (playerId: string) => void;
   sendPusherEvent: <T extends keyof EventPayloads>(
     eventName: T,
     payload?: EventPayloads[T] // Payload type inferred based on the event name
@@ -30,11 +32,14 @@ type PlayerHitPayload = {
   damage: number;
 };
 
+type finishGamePayload = object;
+
 type StartGamePayload = object; // Empty object for start-game
 
 type EventPayloads = {
   "player-hit": PlayerHitPayload;
   "start-game": StartGamePayload;
+  "finish-game": finishGamePayload;
   // Add more event types here if necessary
 };
 
@@ -45,6 +50,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({
   const [isCountdownActive, setIsCountdownActive] = useState(false);
   const [ready, setReady] = useState(false);
   const [gameStarted, setGameStarted] = useState(false);
+  const [gameResult, setGameResult] = useState("");
   const [room , setRoom] = useState("");
   const [player1Health, setPlayer1Health] = useState(100);
   const [player2Health, setPlayer2Health] = useState(100);
@@ -60,6 +66,10 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const initGame = (game: boolean) => {
     setGameStarted(game);
+  }
+
+  const finishGame = (playerId: string) => {
+    setGameResult(playerId);
   }
 
   const initRoom = (room: string) =>{
@@ -131,7 +141,11 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({
         specificPayload = { d: damage, g: guest }; // Include damage and guest ID
       } else if (eventName === "start-game") {
         specificPayload = { g: guest };
-      } else {
+      }
+        else if (eventName === "finish-game") {
+          specificPayload = { g: guest };
+        }
+       else {
         throw new Error("Invalid event name");
       }
   
@@ -158,7 +172,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({
 
   return (
     <GameContext.Provider
-      value={{ player1Health, player2Health, player1Id, player2Id, lastHitPlayer, triggerAttack, initPlayer1, initPlayer2, guest, initGuest, ready, sendPusherEvent, initRoom, initCountdown, isCountdownActive, room, initGame, gameStarted }}
+      value={{ player1Health, player2Health, player1Id, player2Id, lastHitPlayer, triggerAttack, initPlayer1, initPlayer2, guest, initGuest, ready, sendPusherEvent, initRoom, initCountdown, isCountdownActive, room, initGame, gameStarted, gameResult, finishGame }}
     >
       {children}
     </GameContext.Provider>

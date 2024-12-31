@@ -2,6 +2,7 @@
 import TypingText from "./typingText";
 import WarriorArena from "./warriorArena";
 import CountdownPopup from "./countdown";
+import ResultPopup from "./result";
 
 
 
@@ -32,6 +33,7 @@ const GamePage: React.FC<GameProps> = ({ room }) => {
       {/* Content */}
       <div className="relative z-10 flex flex-col items-center justify-between min-h-screen">
         <CountdownPopup />
+        <ResultPopup guestId={room.guestId} />
         {/* Warrior Arena */}
         <WarriorArena player1={room.player1Id} player2={room.player2Id} guestId={room.guestId}/>
 
