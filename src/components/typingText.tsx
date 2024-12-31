@@ -19,6 +19,13 @@ const TypingText: React.FC<TypingTextProps> = ({ text = "" }) => {
   const totalWords = words.length;
   const damagePerWord = 100 / totalWords;
 
+  // Focus input when the game starts
+  useEffect(() => {
+    if (gameStarted && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [gameStarted]);
+
   // Handle input change and trigger attack for each correctly typed word
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const typedValue = e.target.value;
@@ -36,7 +43,7 @@ const TypingText: React.FC<TypingTextProps> = ({ text = "" }) => {
 
       // Trigger attack without worrying about throttling or accumulation
       triggerAttack(guest, damagePerWord);
-      sendPusherEvent("player-hit", {damage: damagePerWord});
+      sendPusherEvent("player-hit", { damage: damagePerWord });
 
       // Mark as completed if all words are typed
       if (currentWordIndex + 1 === totalWords) {
@@ -45,21 +52,6 @@ const TypingText: React.FC<TypingTextProps> = ({ text = "" }) => {
       }
     }
   };
-
-  useEffect(() => {
-    const handleFocusInput = () => {
-      if (inputRef.current) {
-        inputRef.current.focus();
-      }
-    };
-
-    // Focus input when clicking elsewhere on the screen
-    window.addEventListener("click", handleFocusInput);
-
-    return () => {
-      window.removeEventListener("click", handleFocusInput);
-    };
-  }, []);
 
   return (
     <div className="max-w-full">

@@ -4,8 +4,15 @@ import Image from "next/image";
 const Navbar = () => {
 
   return (
-    <nav className="fixed top-0 left-0 w-full bg-primary text-white py-1 shadow-md flex items-center justify-between xs:px-4 md:px-20 lg:px-28">
-      <div>Logo</div>
+    <nav className="fixed top-0 left-0 w-full bg-primary text-white py-1 shadow-md flex items-center justify-between xs:px-4 md:px-20 lg:pl-24 lg:pr-28">
+      <Image 
+        className=""
+        alt="logo"
+        src="/images/Logo.png"
+        width={120}
+        height={120}
+        layout="intrinsic"
+      />
       <div className="flex items-center justify-between xs:gap-4 sm:gap-12">
         <div className="flex items-center text-teal-800">
           {/* Icon */}

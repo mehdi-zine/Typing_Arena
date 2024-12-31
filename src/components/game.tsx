@@ -43,7 +43,7 @@ const GamePage: React.FC<GameProps> = ({ room }) => {
             Type the following text:
           </h2>
           <TypingText 
-          text="a a a a a a a" 
+          text="Typing is a skill that requires not only speed but also precision. As you race against time, each keystroke must land with accuracy to avoid mistakes. Imagine navigating a dense jungle of words, where punctuation marks are hidden traps, and every misplaced letter slows you down. Success demands focus, resilience, and a sharp mind." 
           />
         </div>
       </div>

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "../styles/globals.css";
 import Navbar from "../components/navbar";
+import Head from "next/head";
 
 
 const geistSans = localFont({
@@ -27,9 +28,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        {/* Add Favicon */}
+        <link rel="icon" href="/images/Logo.png" sizes="48x48" type="image/x-icon" />
+        {/* Optional: Other sizes or Apple Touch Icon */}
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
+        >
           <Navbar />
           {children}
       </body>
