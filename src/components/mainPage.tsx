@@ -3,7 +3,7 @@ import LeaderBoardCard from "./leaderBoardCard";
 
 const MainPage = () => {
     return (
-        <div className="bg-gray-100 min-h-screen">
+        <div className="bg-gray-100 min-h-screen mt-8">
             <div className="pt-16 mx-10 xs:mx-4 md:mx-20 lg:mx-28">
                 <div className="flex flex-col md:flex-row gap-10">
 
